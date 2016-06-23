@@ -1,21 +1,17 @@
 var koa = require('koa');
-var fs = require('fs');
 var app = koa();
 
 app.use(function* (next) {
-  if(this.path !== "/json") {
+  if(this.path !== "/") {
     return yield next;
   }
 
-  this.body = { foo: 'bar'};
-});
-
-app.use(function* (next) {
-  if(this.path !== "/stream") {
-    return yield next;
+  if(this.request.is('application/json')) {
+    this.body = { 'message': 'hi!'};
+  } else {
+    this.body = "ok";
   }
 
-  this.body = fs.createReadStream(process.argv[3]);
 });
 
 app.listen(process.argv[2]);
