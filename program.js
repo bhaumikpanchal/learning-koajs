@@ -1,22 +1,29 @@
 var koa = require('koa');
-var session = require('koa-session');
+var views = require('co-views');
 
 var app = koa();
 
-app.keys = ['secret', 'keys'];
+var views = views(__dirname + '/views', {
+  ext: 'ejs'
+});
 
-app.use(session(app));
+var user = {
+  name: {
+    first: 'Tobi',
+    last: 'Holowaychuk'
+  },
+  species: 'ferret',
+  age: 3
+};
 
 app.use(function* (next) {
-  if (this.path === '/') {
+  if (this.path !== '/' || this.path !== 'GET') {
     yield next;
   }
 
-  var cnt = ~~this.session.view + 1;
-
-  this.session.view = cnt;
-  this.body = cnt + ' views';
-
+  this.body = yield views('user', {
+    user: user
+  });
 });
 
 app.listen(process.argv[2]);

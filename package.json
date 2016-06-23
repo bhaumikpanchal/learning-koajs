@@ -5,6 +5,8 @@
   "main": "program.js",
   "dependencies": {
     "co-body": "^4.2.0",
+    "co-views": "^2.1.0",
+    "ejs": "^2.4.2",
     "koa": "^1.2.0",
     "koa-session": "^3.3.1"
   },
