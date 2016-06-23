@@ -1,17 +1,20 @@
 var koa = require('koa');
+var session = require('koa-session');
 
 var app = koa();
 
 app.keys = ['secret', 'keys'];
+
+app.use(session(app));
 
 app.use(function* (next) {
   if (this.path === '/') {
     yield next;
   }
 
-  var cnt = ~~this.cookies.get('view', {signed: true}) + 1;
+  var cnt = ~~this.session.view + 1;
 
-  this.cookies.set('view', cnt, {signed: true});
+  this.session.view = cnt;
   this.body = cnt + ' views';
 
 });
