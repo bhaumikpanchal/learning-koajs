@@ -2,27 +2,22 @@ var koa = require('koa');
 
 var app = koa();
 
-app.use(responseTime());
-app.use(upperCase());
+app.use(errorHandler());
 
 app.use(function* () {
-  this.body = 'hello koa';
+  if (this.path === '/error') throw new Error('ooops');
+  this.body = 'OK';
 });
 
-function responseTime() {
+function errorHandler() {
   return function* (next) {
-    var start = new Date;
-    yield next;
-    var newTime = new Date - start;
-    this.set('X-Response-Time', newTime + 'ms' );
-  };
-}
+    try {
+      yield next;
+    } catch (err) {
+      this.status = 500;
+      this.body = "internal server error";
+    }
 
-function upperCase() {
-  return function* (next) {
-    // do nothing
-    yield next;
-    this.body = this.body.toUpperCase();
   };
 }
 
